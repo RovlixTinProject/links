@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Erestive | HVH & Scripts 2025</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --primary: #ffffff;
+            --secondary: #a0a0a0;
+            --glass: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --muted: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            cursor: none !important; 
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 🖱️ Кастомный курсор */
+        .cursor {
+            position: fixed; top: 0; left: 0; width: 12px; height: 12px;
+            background-color: var(--primary); border-radius: 50%;
+            pointer-events: none; z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+        .cursor-ring {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%;
+            pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+            transition-timing-function: ease-out;
+        }
+        .hovering .cursor { width: 20px; height: 20px; background-color: #fff; box-shadow: 0 0 25px #fff; }
+        .hovering .cursor-ring { width: 60px; height: 60px; border-color: rgba(255, 255, 255, 0.8); background: rgba(255, 255, 255, 0.1); }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+
+        /* 🎵 Плавающая кнопка музыки */
+        .music-float-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .music-float-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .music-float-btn.playing {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        .music-float-btn svg { width: 24px; height: 24px; }
+        .music-float-btn .icon-pause { display: none; }
+        .music-float-btn.playing .icon-play { display: none; }
+        .music-float-btn.playing .icon-pause { display: block; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px; background: rgba(5, 5, 5, 0.4);
+            backdrop-filter: blur(12px); position: fixed; width: 100%; top: 0;
+            z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--primary); text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        .join-btn {
+            background: transparent; color: var(--primary); padding: 12px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
+            text-decoration: none; font-weight: 900; transition: all 0.3s; text-transform: uppercase;
+            font-size: 0.85rem; letter-spacing: 1px;
+        }
+        .join-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 30px rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
+
+        .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 100vh; padding: 0 20px; position: relative; }
+
+        .hero h1 { font-size: 6rem; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -3px; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3); transition: 0.5s; }
+        .hero h1:hover { -webkit-text-stroke: 1px var(--primary); text-shadow: 0 0 40px rgba(255, 255, 255, 0.2); color: #fff; }
+        .hero h1 span { color: var(--primary); -webkit-text-stroke: 0; text-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
+
+        .hero p { font-size: 1.2rem; color: var(--muted); max-width: 650px; margin-bottom: 30px; line-height: 1.6; font-weight: 400; }
+
+        .discord-stats {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.05); padding: 8px 16px;
+            border-radius: 20px; font-size: 0.9rem; font-weight: 600;
+            margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .discord-stats .dot { width: 8px; height: 8px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 10px #ffffff; }
+        .discord-stats span { color: #fff; }
+
+        .main-btn {
+            background: var(--primary); color: #000; padding: 20px 60px; font-size: 1.2rem; font-weight: 900;
+            border-radius: 50px; text-decoration: none; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        .main-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
+
+        .games-section { padding: 80px 5%; position: relative; z-index: 10; }
+        .games-title { font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 5px; margin-bottom: 40px; font-weight: 800; text-align: center; }
+        .games-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: 0 auto; }
+
+        .game-tag {
+            background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff; padding: 15px 30px; border-radius: 12px; font-size: 1rem; font-weight: 700;
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; text-decoration: none;
+        }
+        .game-tag::before { content: '•'; color: var(--secondary); font-size: 1.5rem; line-height: 0; }
+        .game-tag:hover { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1); }
+
+        .feature-card { background: var(--glass); backdrop-filter: blur(16px); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .feature-card:hover { transform: translateY(-10px); border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); }
+        .feature-card h3 { margin-bottom: 15px; color: #fff; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .feature-card p { color: var(--muted); font-size: 1rem; line-height: 1.7; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; padding: 40px 10% 100px; max-width: 1200px; margin: 0 auto; }
+
+        footer { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(10px); z-index: 10; position: relative; }
+        footer span { color: var(--primary); font-weight: bold; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .hero, .games-section, .features { animation: fadeUp 1s ease-out forwards; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            header { padding: 15px 20px; }
+            .logo { font-size: 1.1rem; }
+            * { cursor: auto !important; }
+            .cursor, .cursor-ring { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    <div class="cursor-ring"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 🎵 АУДИО (Замени music.mp3 на имя твоего файла) -->
+    <audio id="bg-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 🎵 Плавающая кнопка музыки -->
+    <button class="music-float-btn hover-target" id="music-btn" title="Включить/Выключить музыку">
+        <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+
+    <header>
+        <div class="logo">Project <span>Erestive</span></div>
+        <div class="header-right">
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="join-btn hover-target">Discord сервер</a>
+        </div>
+    </header>
+
+    <main class="hero">
+        <h1>Project <span>Erestive</span></h1>
+        
+        <div class="discord-stats">
+            <div class="dot"></div>
+            <span id="discord-count">Загрузка...</span> участников
+        </div>
+
+        <p>Приватные скрипты, конфиги и лучшее HVH-комьюнити. Доминируй в каждой игре с нашими разработками. Обходы, фиксы и чистая победа.</p>
+        <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="main-btn hover-target">Discord сервер</a>
+    </main>
+
+    <section class="games-section">
+        <div class="games-title">Supported Games</div>
+        <div class="games-grid">
+            <a href="https://scriptblox.com/script/UPDATE!-BloxStrike-NeverTive-or-Erestive-229923" target="_blank" class="game-tag hover-target">Blox Strike</a>
+            <a href="https://scriptblox.com/script/Universal-Script-MultiFling-OPEN-SOURCE-222809" target="_blank" class="game-tag hover-target">MultiFling</a>
+            <a href="https://scriptblox.com/script/Bridge-Duel-ErestiveBD-216547" target="_blank" class="game-tag hover-target">Bridge Duel 🗝️</a>
+            <a href="https://scriptblox.com/script/Counter-Blox-Erestive-139344" target="_blank" class="game-tag hover-target">Counter Blox 🗝️</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">Zarechensk RP</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">Fluxo PvP</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">Murder Mystery 2</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">HookStealer</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">WarpPing</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">KeyPRO</a>
+            <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="game-tag hover-target">Penablox HVH</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Undetected</h3>
+            <p>Наши скрипты и обходы всегда обновляются. Забудь про баны и играй с максимальным комфортом.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Best HVH Configs</h3>
+            <p>Готовые настройки для доминации в Rivals, Fluxo и Counter Blox. Просто загрузи и уничтожай.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Private Community</h3>
+            <p>Закрытое комьюнити читеров. Обмен опытом, исходники, тесты новых фичей и просто общение.</p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; <span>2025</span> Project Erestive. For educational purposes only.
+    </footer>
+
+    <script>
+        // 🖱️ Курсор
+        const cursor = document.querySelector('.cursor');
+        const cursorRing = document.querySelector('.cursor-ring');
+        const hoverTargets = document.querySelectorAll('.hover-target, a, button');
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px';
+        });
+
+        function animateCursorRing() {
+            ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.left = ringX + 'px'; cursorRing.style.top = ringY + 'px';
+            requestAnimationFrame(animateCursorRing);
+        }
+        animateCursorRing();
+
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // 🎵 Аудиоплеер
+        const audio = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-btn');
+        let isPlaying = false;
+
+        // Устанавливаем громкость по умолчанию (50%)
+        audio.volume = 0.5;
+
+        musicBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                // Пытаемся включить
+                audio.play().then(() => {
+                    musicBtn.classList.add('playing');
+                    isPlaying = true;
+                }).catch(err => {
+                    console.log("Ошибка аудио:", err);
+                });
+            }
+        });
+
+        // 📊 Счетчик Discord
+        async function fetchDiscordCount() {
+            const inviteCode = 'qe45Wk2na5';
+            try {
+                const res = await fetch(`https://discord.com/api/v10/invites/${inviteCode}?with_counts=true`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.approximate_member_count) {
+                        document.getElementById('discord-count').textContent = data.approximate_member_count.toLocaleString();
+                        return;
+                    }
+                }
+            } catch (e) { console.log('Discord API Error'); }
+            document.getElementById('discord-count').textContent = '∞';
+        }
+        fetchDiscordCount();
+
+        // 🌌 Фон (частицы)
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5, size: Math.random() * 2 + 1 });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.fill();
+
+                let dx = mouseX - p.x; let dy = mouseY - p.y; let dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 200) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouseX, mouseY); ctx.strokeStyle = `rgba(255, 255, 255, ${0.5 - dist / 400})`; ctx.stroke(); }
+                for (let j = i + 1; j < particles.length; j++) {
+                    let p2 = particles[j]; let dx2 = p.x - p2.x; let dy2 = p.y - p2.y; let dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                    if (dist2 < 100) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 - dist2 / 300})`; ctx.stroke(); }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
