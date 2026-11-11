@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Erestive | HVH & Scripts 2025</title>
     <link href="https://googleapis.com" rel="stylesheet">
+    
+    <!-- 🛠️ Иконка вкладки (Favicon) -->
+    <link rel="icon" type="image/png" href="logo.png">
+
     <style>
         :root {
             --bg: #050505;
@@ -56,47 +60,44 @@
 
         /* 🎵 Плавающая кнопка музыки */
         .music-float-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            border-radius: 50%; background: var(--glass); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .music-float-btn:hover {
-            transform: scale(1.1);
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .music-float-btn.playing {
-            background: var(--primary);
-            color: #000;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        }
+        .music-float-btn:hover { transform: scale(1.1); border-color: var(--primary); background: rgba(255, 255, 255, 0.1); }
+        .music-float-btn.playing { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
         .music-float-btn svg { width: 24px; height: 24px; }
         .music-float-btn .icon-pause { display: none; }
         .music-float-btn.playing .icon-play { display: none; }
         .music-float-btn.playing .icon-pause { display: block; }
 
+        /* 🧭 Шапка */
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 50px; background: rgba(5, 5, 5, 0.4);
+            padding: 15px 50px; background: rgba(5, 5, 5, 0.4);
             backdrop-filter: blur(12px); position: fixed; width: 100%; top: 0;
             z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
         }
 
-        .logo { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-        .logo span { color: var(--primary); text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
+        .logo-container { display: flex; align-items: center; gap: 15px; }
+        
+        /* 🖼️ Логотип */
+        .logo-img {
+            height: 40px; 
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); /* Свечение лого */
+            transition: 0.3s;
+        }
+        .logo-img:hover {
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            transform: scale(1.05);
+        }
+
+        .logo-text { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        .logo-text span { color: var(--primary); text-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
 
         .header-right { display: flex; align-items: center; gap: 20px; }
 
@@ -108,43 +109,69 @@
         }
         .join-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 30px rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
 
+        /* 🚀 Главный экран */
         .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 100vh; padding: 0 20px; position: relative; }
 
-        .hero h1 { font-size: 6rem; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -3px; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3); transition: 0.5s; }
+        .hero h1 { 
+            font-size: 6rem; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; 
+            letter-spacing: -3px; line-height: 1; color: transparent; 
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3); 
+            transition: 0.5s; 
+            animation: textFadeIn 1.5s ease-out;
+        }
         .hero h1:hover { -webkit-text-stroke: 1px var(--primary); text-shadow: 0 0 40px rgba(255, 255, 255, 0.2); color: #fff; }
         .hero h1 span { color: var(--primary); -webkit-text-stroke: 0; text-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
 
-        .hero p { font-size: 1.2rem; color: var(--muted); max-width: 650px; margin-bottom: 30px; line-height: 1.6; font-weight: 400; }
+        .hero p { 
+            font-size: 1.2rem; color: var(--muted); max-width: 650px; margin-bottom: 30px; line-height: 1.6; font-weight: 400; 
+            animation: fadeUp 1.2s ease-out 0.3s both;
+        }
 
+        /* 📊 Счетчик Discord */
         .discord-stats {
             display: inline-flex; align-items: center; gap: 10px;
             background: rgba(255, 255, 255, 0.05); padding: 8px 16px;
             border-radius: 20px; font-size: 0.9rem; font-weight: 600;
             margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeUp 1.2s ease-out 0.2s both;
         }
         .discord-stats .dot { width: 8px; height: 8px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 10px #ffffff; }
         .discord-stats span { color: #fff; }
 
+        /* Кнопка с пульсацией */
         .main-btn {
             background: var(--primary); color: #000; padding: 20px 60px; font-size: 1.2rem; font-weight: 900;
             border-radius: 50px; text-decoration: none; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: fadeUp 1.2s ease-out 0.4s both, pulseGlow 2s infinite;
         }
-        .main-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.4); }
+        .main-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.6); }
 
+        /* 🎮 Игры (Анимация при скролле) */
         .games-section { padding: 80px 5%; position: relative; z-index: 10; }
-        .games-title { font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 5px; margin-bottom: 40px; font-weight: 800; text-align: center; }
+        .games-title { 
+            font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 5px; 
+            margin-bottom: 40px; font-weight: 800; text-align: center; 
+        }
         .games-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 1000px; margin: 0 auto; }
 
         .game-tag {
             background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05);
             color: #fff; padding: 15px 30px; border-radius: 12px; font-size: 1rem; font-weight: 700;
             transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; text-decoration: none;
+            opacity: 0; transform: translateY(30px);
         }
+        .game-tag.visible { animation: fadeUp 0.6s ease-out forwards; }
         .game-tag::before { content: '•'; color: var(--secondary); font-size: 1.5rem; line-height: 0; }
         .game-tag:hover { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1); }
 
-        .feature-card { background: var(--glass); backdrop-filter: blur(16px); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.4s ease; position: relative; overflow: hidden; }
+        /* Фишки (Анимация при скролле) */
+        .feature-card { 
+            background: var(--glass); backdrop-filter: blur(16px); padding: 40px; border-radius: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.4s ease; position: relative; overflow: hidden;
+            opacity: 0; transform: translateY(40px);
+        }
+        .feature-card.visible { animation: fadeUp 0.8s ease-out forwards; }
         .feature-card:hover { transform: translateY(-10px); border-color: rgba(255, 255, 255, 0.1); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6); }
         .feature-card h3 { margin-bottom: 15px; color: #fff; font-size: 1.3rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .feature-card p { color: var(--muted); font-size: 1rem; line-height: 1.7; }
@@ -153,13 +180,26 @@
         footer { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(10px); z-index: 10; position: relative; }
         footer span { color: var(--primary); font-weight: bold; }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .hero, .games-section, .features { animation: fadeUp 1s ease-out forwards; }
+        /* ✨ Анимации */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes textFadeIn {
+            from { opacity: 0; letter-spacing: -20px; filter: blur(10px); }
+            to { opacity: 1; letter-spacing: -3px; filter: blur(0); }
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+        }
 
         @media (max-width: 768px) {
             .hero h1 { font-size: 3rem; }
             header { padding: 15px 20px; }
-            .logo { font-size: 1.1rem; }
+            .logo-text { font-size: 1rem; }
+            .logo-img { height: 30px; }
             * { cursor: auto !important; }
             .cursor, .cursor-ring { display: none; }
         }
@@ -171,19 +211,22 @@
     <div class="cursor-ring"></div>
     <canvas id="bg-canvas"></canvas>
 
-    <!-- 🎵 АУДИО (Замени music.mp3 на имя твоего файла) -->
+    <!-- 🎵 АУДИО -->
     <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 🎵 Плавающая кнопка музыки -->
-    <button class="music-float-btn hover-target" id="music-btn" title="Включить/Выключить музыку">
+    <button class="music-float-btn hover-target" id="music-btn" title="Music">
         <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
 
     <header>
-        <div class="logo">Project <span>Erestive</span></div>
+        <div class="logo-container">
+            <!-- 🖼️ Твой логотип -->
+            <img src="logo.png" alt="Erestive Logo" class="logo-img">
+            <div class="logo-text">Project <span>Erestive</span></div>
+        </div>
         <div class="header-right">
             <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="join-btn hover-target">Discord сервер</a>
         </div>
@@ -201,7 +244,8 @@
         <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="main-btn hover-target">Discord сервер</a>
     </main>
 
-    <section class="games-section">
+    <!-- Класс reveal-section добавлен для анимации появления -->
+    <section class="games-section reveal-section">
         <div class="games-title">Supported Games</div>
         <div class="games-grid">
             <a href="https://scriptblox.com/script/UPDATE!-BloxStrike-NeverTive-or-Erestive-229923" target="_blank" class="game-tag hover-target">Blox Strike</a>
@@ -218,7 +262,7 @@
         </div>
     </section>
 
-    <section class="features">
+    <section class="features reveal-section">
         <div class="feature-card">
             <h3>Undetected</h3>
             <p>Наши скрипты и обходы всегда обновляются. Забудь про баны и играй с максимальным комфортом.</p>
@@ -265,8 +309,6 @@
         const audio = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
         let isPlaying = false;
-
-        // Устанавливаем громкость по умолчанию (50%)
         audio.volume = 0.5;
 
         musicBtn.addEventListener('click', () => {
@@ -275,13 +317,10 @@
                 musicBtn.classList.remove('playing');
                 isPlaying = false;
             } else {
-                // Пытаемся включить
                 audio.play().then(() => {
                     musicBtn.classList.add('playing');
                     isPlaying = true;
-                }).catch(err => {
-                    console.log("Ошибка аудио:", err);
-                });
+                }).catch(err => console.log("Ошибка аудио:", err));
             }
         });
 
@@ -301,6 +340,25 @@
             document.getElementById('discord-count').textContent = '∞';
         }
         fetchDiscordCount();
+
+        // ✨ Анимация появления элементов при скролле (Scroll Reveal)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const elements = entry.target.querySelectorAll('.game-tag, .feature-card');
+                    elements.forEach((el, index) => {
+                        // Небольшая задержка для каждого элемента (эффект каскада)
+                        setTimeout(() => {
+                            el.classList.add('visible');
+                        }, index * 100); 
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal-section').forEach(section => {
+            observer.observe(section);
+        });
 
         // 🌌 Фон (частицы)
         const canvas = document.getElementById('bg-canvas');
