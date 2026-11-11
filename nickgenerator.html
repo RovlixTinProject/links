@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nickname Master v22.0</title>
+    <style>
+        @import url('https://googleapis.com');
+        body { background: #0d0f14; color: #e1e1e1; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: #1a1d26; padding: 30px; border-radius: 28px; width: 100%; max-width: 480px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.03); }
+        h1 { font-size: 0.8rem; text-align: center; color: #4f81f7; text-transform: uppercase; margin-bottom: 25px; letter-spacing: 4px; font-weight: 900; }
+        .result-container { position: relative; margin-bottom: 20px; }
+        .result-box { background: #090b10; border-radius: 18px; padding: 25px; text-align: center; font-size: 1.8rem; font-weight: 900; color: #fff; border: 2px solid #2d3341; cursor: pointer; transition: 0.3s; min-height: 50px; display: flex; align-items: center; justify-content: center; word-break: break-all; }
+        .fav-btn { position: absolute; right: 15px; top: 15px; background: none; border: none; color: #333; font-size: 1.5rem; cursor: pointer; transition: 0.2s; outline: none; }
+        .fav-btn.active { color: #f43f5e; }
+        .check-links { display: flex; gap: 10px; justify-content: center; margin-bottom: 25px; opacity: 0; transition: 0.3s; pointer-events: none; }
+        .check-links.active { opacity: 1; pointer-events: auto; }
+        .check-btn { font-size: 0.7rem; color: #fff; border: none; padding: 12px 20px; border-radius: 12px; text-decoration: none; font-weight: 800; text-transform: uppercase; transition: 0.2s; }
+        .g-btn { background: #4f81f7; } .y-btn { background: #f43f5e; }
+        .label { font-size: 0.6rem; color: #6a7282; font-weight: 800; text-transform: uppercase; margin: 15px 0 8px; letter-spacing: 1.5px; }
+        input { background: #12151d; color: #fff; border: 1px solid #2d3341; border-radius: 12px; padding: 14px; width: 100%; box-sizing: border-box; outline: none; font-size: 0.9rem; }
+        .styles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .style-item { display: flex; align-items: center; gap: 10px; background: #1f232d; padding: 12px; border-radius: 14px; border: 1px solid #2d3341; font-size: 0.75rem; cursor: pointer; }
+        .style-item input { display: none; }
+        .style-item.active { background: #4f81f7; color: white; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn { border: none; border-radius: 18px; font-weight: 900; cursor: pointer; padding: 18px; transition: 0.3s; width: 100%; text-transform: uppercase; }
+        .btn-main { background: #4f81f7; color: white; }
+        .btn-sub { background: #1f232d; color: #9ca3af; border: 1px solid #2d3341; font-size: 0.8rem; }
+        .item-tag { font-size: 0.7rem; background: #090b10; padding: 7px 12px; border-radius: 10px; color: #8b949e; border: 1px solid #2d3341; cursor: pointer; margin: 4px; display: inline-block; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Nickname Master v22</h1>
+    <div class="result-container">
+        <div id="result" class="result-box" onclick="copyResult()">---</div>
+        <button id="favBtn" class="fav-btn" onclick="toggleFavorite()">❤</button>
+    </div>
+    <div class="check-links" id="checkLinks">
+        <a href="" id="googleLink" target="_blank" class="check-btn g-btn">Google Search</a>
+        <a href="" id="youtubeLink" target="_blank" class="check-btn y-btn">YouTube Search</a>
+    </div>
+    <input type="text" id="customInput" placeholder="Ваш текст...">
+    <div class="label">Длина</div>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <input type="number" id="minLength" value="4" style="width:50%">
+        <input type="number" id="maxLength" value="8" style="width:50%">
+    </div>
+    <div class="label">Стили</div>
+    <div class="styles-grid">
+        <label class="style-item"><input type="checkbox" id="l33t"> L33T</label>
+        <label class="style-item"><input type="checkbox" id="wave"> Забор</label>
+        <label class="style-item"><input type="checkbox" id="glitch"> Глюк</label>
+        <label class="style-item"><input type="checkbox" id="asian"> Asian</label>
+        <label class="style-item"><input type="checkbox" id="small"> Small</label>
+        <label class="style-item"><input type="checkbox" id="frame"> [ Рамка ]</label>
+    </div>
+    <div class="btn-group">
+        <button class="btn btn-main" onclick="animateRoll()">СГЕНЕРИРОВАТЬ</button>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-sub" style="flex:1" onclick="mutateCurrent()">МИКС</button>
+            <button class="btn btn-sub" style="flex:1" onclick="styleInput()">СТИЛЬ</button>
+        </div>
+    </div>
+    <div class="list-container">
+        <div class="label">Избранное / История</div>
+        <div id="favList"></div>
+        <div id="historyList" style="margin-top:10px"></div>
+    </div>
+</div>
+
+<script>
+    const data = { eng: { v: "aeiouy", c: "bcdfghjklmnpqrstvwxz" } };
+    const tables = {
+        l33t: { 'a':'4','e':'3','i':'1','o':'0','s':'$','t':'7' },
+        asian: { 'a':'卂','b':'乃','c':'匚','d':'刀','e':'乇','f':'下','g':'厶','h':'卄','i':'丨','j':'丿','k':'长','l':'ㄥ','m':'爪','n':'几','o':'口','p':'尸','q':'口','r':'尺','s':'丂','t':'ㄒ','u':'ㄩ','v':'∨','w':'山','x':'乂','y':'ㄚ','z':'乙' },
+        small: { 'a':'ᴀ','b':'ʙ','c':'ᴄ','d':'ᴅ','e':'ᴇ','f':'ғ','g':'ɢ','h':'ʜ','i':'ɪ','j':'ᴊ','k':'ᴋ','l':'ʟ','m':'ᴍ','n':'ɴ','o':'ᴏ','p':'ᴘ','q':'ǫ','r':'ʀ','s':'s','t':'ᴛ','u':'ᴜ','v':'ᴠ','w':'ᴡ','x':'x','y':'ʏ','z':'ᴢ' }
+    };
+    let favorites = JSON.parse(localStorage.getItem('fav_v2') || '[]');
+    let history = [];
+    let currentBase = "";
+
+    function init() {
+        renderLists();
+        document.querySelectorAll('.style-item input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                e.target.parentElement.classList.toggle('active', e.target.checked);
+                if (currentBase) updateDisplay(applyEffects(currentBase));
+            });
+        });
+    }
+
+    function applyEffects(text) {
+        let res = text.toLowerCase().trim();
+        if (document.getElementById('l33t').checked) res = res.split('').map(c => tables.l33t[c] || c).join('');
+        if (document.getElementById('asian').checked) res = res.split('').map(c => tables.asian[c] || c).join('');
+        if (document.getElementById('small').checked) res = res.split('').map(c => tables.small[c] || c).join('');
+        if (document.getElementById('wave').checked) {
+            res = res.split('').map((c, i) => i % 2 === 0 ? c.toUpperCase() : c.toLowerCase()).join('');
+        } else if (!document.getElementById('l33t').checked && !document.getElementById('asian').checked) {
+            res = res.charAt(0).toUpperCase() + res.slice(1);
+        }
+        if (document.getElementById('glitch').checked) res = res.split('').map(c => c + '\u033f').join('');
+        return document.getElementById('frame').checked ? "[ " + res + " ]" : res;
+    }
+
+    function generateNick() {
+        let min = parseInt(document.getElementById('minLength').value) || 4;
+        let max = parseInt(document.getElementById('maxLength').value) || 8;
+        let len = Math.floor(Math.random() * (max - min + 1)) + min;
+        let nick = ""; let isV = Math.random() > 0.5;
+        for (let i = 0; i < len; i++) {
+            nick += data.eng[isV ? 'v' : 'c'][Math.floor(Math.random() * data.eng[isV ? 'v' : 'c'].length)];
+            isV = !isV;
+        }
+        currentBase = nick;
+        updateDisplay(applyEffects(nick), true);
+    }
+
+    function updateDisplay(text, save = false) {
+        document.getElementById('result').innerText = text;
+        document.getElementById('favBtn').classList.toggle('active', favorites.includes(text));
+        
+        // ВОТ ТВОИ ССЫЛКИ
+        let query = encodeURIComponent(text);
+        document.getElementById('googleLink').href = 'https://www.google.com/search?q=' + query;
+        document.getElementById('youtubeLink').href = 'https://www.youtube.com/results?search_query=' + query;
+        
+        document.getElementById('checkLinks').classList.add('active');
+        if (save) { history.unshift(text); if (history.length > 10) history.pop(); renderLists(); }
+    }
+
+    function animateRoll() {
+        let count = 0;
+        const roll = setInterval(() => {
+            document.getElementById('result').innerText = Math.random().toString(36).substring(2, 7);
+            if (count++ > 8) { clearInterval(roll); generateNick(); }
+        }, 50);
+    }
+
+    function mutateCurrent() {
+        if (!currentBase) return animateRoll();
+        let arr = currentBase.split('');
+        arr[Math.floor(Math.random() * arr.length)] = data.eng.v[Math.floor(Math.random() * 6)];
+        currentBase = arr.join('');
+        updateDisplay(applyEffects(currentBase), true);
+    }
+
+    function styleInput() {
+        let val = document.getElementById('customInput').value.trim();
+        if (val) { currentBase = val; updateDisplay(applyEffects(val), true); }
+    }
+
+    function toggleFavorite() {
+        const n = document.getElementById('result').innerText;
+        if (n === "---") return;
+        if (favorites.includes(n)) favorites = favorites.filter(f => f !== n);
+        else favorites.unshift(n);
+        localStorage.setItem('fav_v2', JSON.stringify(favorites));
+        renderLists();
+        document.getElementById('favBtn').classList.toggle('active');
+    }
+
+    function renderLists() {
+        document.getElementById('favList').innerHTML = favorites.map(f => `<div class="item-tag" style="color:#f43f5e" onclick="copyText('${f}')">${f}</div>`).join('');
+        document.getElementById('historyList').innerHTML = history.map(h => `<div class="item-tag" onclick="copyText('${h}')">${h}</div>`).join('');
+    }
+
+    function copyText(t) { 
+        navigator.clipboard.writeText(t).then(() => {
+            const res = document.getElementById('result');
+            const old = res.innerText;
+            res.innerText = "Скопировано!";
+            setTimeout(() => res.innerText = old, 800);
+        });
+    }
+
+    function copyResult() { const t = document.getElementById('result').innerText; if (t !== "---") copyText(t); }
+    window.onload = init;
+</script>
+</body>
+</html>
