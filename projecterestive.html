@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Erestive | HVH & Scripts 2025</title>
     <link href="https://googleapis.com" rel="stylesheet">
-    
-    <!-- 🛠️ Иконка вкладки (Favicon) -->
     <link rel="icon" type="image/png" href="logo.png">
 
     <style>
@@ -36,7 +34,6 @@
             flex-direction: column;
         }
 
-        /* 🖱️ Кастомный курсор */
         .cursor {
             position: fixed; top: 0; left: 0; width: 12px; height: 12px;
             background-color: var(--primary); border-radius: 50%;
@@ -58,7 +55,6 @@
 
         #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
 
-        /* 🎵 Плавающая кнопка музыки */
         .music-float-btn {
             position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
             border-radius: 50%; background: var(--glass); backdrop-filter: blur(10px);
@@ -73,7 +69,6 @@
         .music-float-btn.playing .icon-play { display: none; }
         .music-float-btn.playing .icon-pause { display: block; }
 
-        /* 🧭 Шапка */
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px 50px; background: rgba(5, 5, 5, 0.4);
@@ -84,11 +79,10 @@
 
         .logo-container { display: flex; align-items: center; gap: 15px; }
         
-        /* 🖼️ Логотип */
         .logo-img {
             height: 40px; 
             width: auto;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); /* Свечение лого */
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
             transition: 0.3s;
         }
         .logo-img:hover {
@@ -109,7 +103,7 @@
         }
         .join-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 30px rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
 
-        /* 🚀 Главный экран */
+         🚀 Главный экран */
         .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 100vh; padding: 0 20px; position: relative; }
 
         .hero h1 { 
@@ -127,7 +121,6 @@
             animation: fadeUp 1.2s ease-out 0.3s both;
         }
 
-        /* 📊 Счетчик Discord */
         .discord-stats {
             display: inline-flex; align-items: center; gap: 10px;
             background: rgba(255, 255, 255, 0.05); padding: 8px 16px;
@@ -138,7 +131,6 @@
         .discord-stats .dot { width: 8px; height: 8px; background: #ffffff; border-radius: 50%; box-shadow: 0 0 10px #ffffff; }
         .discord-stats span { color: #fff; }
 
-        /* Кнопка с пульсацией */
         .main-btn {
             background: var(--primary); color: #000; padding: 20px 60px; font-size: 1.2rem; font-weight: 900;
             border-radius: 50px; text-decoration: none; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
@@ -147,7 +139,6 @@
         }
         .main-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 255, 255, 0.6); }
 
-        /* 🎮 Игры (Анимация при скролле) */
         .games-section { padding: 80px 5%; position: relative; z-index: 10; }
         .games-title { 
             font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: 5px; 
@@ -165,7 +156,6 @@
         .game-tag::before { content: '•'; color: var(--secondary); font-size: 1.5rem; line-height: 0; }
         .game-tag:hover { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1); }
 
-        /* Фишки (Анимация при скролле) */
         .feature-card { 
             background: var(--glass); backdrop-filter: blur(16px); padding: 40px; border-radius: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.03); transition: all 0.4s ease; position: relative; overflow: hidden;
@@ -180,7 +170,6 @@
         footer { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.05); background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(10px); z-index: 10; position: relative; }
         footer span { color: var(--primary); font-weight: bold; }
 
-        /* ✨ Анимации */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -211,7 +200,6 @@
     <div class="cursor-ring"></div>
     <canvas id="bg-canvas"></canvas>
 
-    <!-- 🎵 АУДИО -->
     <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
@@ -223,7 +211,6 @@
 
     <header>
         <div class="logo-container">
-            <!-- 🖼️ Твой логотип -->
             <img src="logo.png" alt="Erestive Logo" class="logo-img">
             <div class="logo-text">Project <span>Erestive</span></div>
         </div>
@@ -243,8 +230,6 @@
         <p>Приватные скрипты, конфиги и лучшее HVH-комьюнити. Доминируй в каждой игре с нашими разработками. Обходы, фиксы и чистая победа.</p>
         <a href="https://discord.gg/qe45Wk2na5" target="_blank" class="main-btn hover-target">Discord сервер</a>
     </main>
-
-    <!-- Класс reveal-section добавлен для анимации появления -->
     <section class="games-section reveal-section">
         <div class="games-title">Supported Games</div>
         <div class="games-grid">
@@ -282,7 +267,6 @@
     </footer>
 
     <script>
-        // 🖱️ Курсор
         const cursor = document.querySelector('.cursor');
         const cursorRing = document.querySelector('.cursor-ring');
         const hoverTargets = document.querySelectorAll('.hover-target, a, button');
@@ -305,7 +289,6 @@
             target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });
 
-        // 🎵 Аудиоплеер
         const audio = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-btn');
         let isPlaying = false;
@@ -324,7 +307,6 @@
             }
         });
 
-        // 📊 Счетчик Discord
         async function fetchDiscordCount() {
             const inviteCode = 'qe45Wk2na5';
             try {
@@ -341,13 +323,12 @@
         }
         fetchDiscordCount();
 
-        // ✨ Анимация появления элементов при скролле (Scroll Reveal)
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const elements = entry.target.querySelectorAll('.game-tag, .feature-card');
                     elements.forEach((el, index) => {
-                        // Небольшая задержка для каждого элемента (эффект каскада)
+
                         setTimeout(() => {
                             el.classList.add('visible');
                         }, index * 100); 
@@ -360,7 +341,6 @@
             observer.observe(section);
         });
 
-        // 🌌 Фон (частицы)
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
